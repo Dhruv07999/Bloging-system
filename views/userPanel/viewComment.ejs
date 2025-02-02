@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <%- include('../Layouts/Header') %>
+    <div class="w-30">
+        <% commentDataShow.map((v,i)=>{ %>
+            <div class="d-flex align-items-top bg-white py-3 px-3 rounded-2">
+                <div><img src="<%= v.commentImage %>" alt="" width="50px" height="50px" style="border-radius: 50%;"></div>
+                <div class="ms-4 ">
+                    <h5 class="mb-0"><%= v.name %></h5>
+                    <small class="text-muted me-2"><%= new Date(v.createdAt).toLocaleDateString() %></small>
+                    <small class="text-muted"><%= new Date(v.createdAt).toLocaleTimeString() %></small>
+                    <p><%- v.comment %></p>
+                </div>
+
+            </div>
+        <% }) %>
+
+        <%- include('../Layouts/Footer') %>
+</body>
+</html>

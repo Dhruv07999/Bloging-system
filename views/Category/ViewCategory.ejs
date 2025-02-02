@@ -1,0 +1,162 @@
+<%- include('../Layouts/Header') %>
+<style>
+  .disabled {
+      pointer-events: none;
+      opacity: 0.6;
+  }
+  .pagination button {
+      margin: 0 2px;
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      background: #f8f9fa;
+      color: #333;
+      cursor: pointer;
+  }
+  .pagination button.active {
+      background: #007bff;
+      color: #fff;
+      font-weight: bold;
+  }
+  .pagination button.disabled {
+      cursor: not-allowed;
+  }
+</style>
+
+<!--begin::App Main-->
+<main class="app-main">
+  <!--begin::App Content Header-->
+  <div class="app-content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">View Category</h3>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">View Category</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end::App Content Header-->
+
+  <!--begin::App Content-->
+  <div class="app-content">
+    <div class="container-fluid">
+      <div class="card mb-4">
+        <!--begin::Card Header-->
+        <div class="card-header row">
+          <h3 class="card-title col-sm-6">Category Data Table</h3>
+          <!-- Search Form -->
+          <form class="col-sm-4">
+            <div class="input-group">
+              <input type="text" name="searchCategory" value="<%= Search %>" placeholder="Search Category" class="form-control">
+              <span class="input-group-append">
+                <button type="submit" class="btn btn-primary">Search</button>
+              </span>
+            </div>
+          </form>
+          <!-- Reset Button -->
+          <a class="col-sm-2" href="/dashboard/viewCategory">
+            <button type="button" class="btn btn-danger">Reset All</button>
+          </a>
+        </div>
+        <!--end::Card Header-->
+
+        <!--begin::Card Body-->
+        <div class="card-body">
+          <form action="/dashBoard/multipleDelteCategory" method="post">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>
+                    <input type="checkbox" id="checkAll">
+                    <button type="submit" id="hideBtn"><i class="bi bi-trash text-danger"></i></button>
+                  </th>
+                  <th style="width: 10px">#</th>
+                  <th>Category Name</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% CategoryData.forEach((v, i) => { %>
+                  <tr>
+                    <td><input type="checkbox" value="<%= v.id %>" name="Ids"></td>
+                    <td><%= i + 1 %></td>
+                    <td><%= v.categoryName %></td>
+                    <td><%= v.status %></td>
+                    <td>
+                      <a href="/dashboard/deleteCategory/?categoryId=<%= v.id %>">
+                        <i class="bi bi-trash text-danger"></i>
+                      </a> ||
+                      <a href="/dashboard/updateCategory/<%= v.id %>">
+                        <i class="bi bi-pencil-square text-primary"></i>
+                      </a> ||
+
+                      <% if(v.status) { %>
+                        <a href="/dashboard/statusCheckTrue/?statusId=<%= v.id %>&status=false">
+                          Activate
+                        </a>
+                      <% } else { %>
+                        <a href="/dashboard/statusCheckTrue/?statusId=<%= v.id %>&status=true">
+                          Deactivate
+                        </a>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </form>
+        </div>
+        <!--end::Card Body-->
+
+        <!-- Pagination -->
+        <div class="card-footer">
+          <div class="row justify-content-center">
+            <div class="col-auto">
+              <div class="pagination">
+                <!-- Prev Button -->
+                <a href="/dashboard/ViewCategory?page=<%= page - 1 %>&searchCategory=<%= Search %>" 
+                   class="<%= page <= 0 ? 'disabled' : '' %>">
+                  <button class="<%= page <= 0 ? 'disabled' : '' %>">Prev</button>
+                </a>
+
+                <!-- Page Buttons -->
+                <% for (let i = 0; i < totalblog; i++) { %>
+                  <a href="/dashboard/ViewCategory?page=<%= i %>&searchCategory=<%= Search %>">
+                    <button class="<%= i === page ? 'active' : '' %>"><%= i + 1 %></button>
+                  </a>
+                <% } %>
+
+                <!-- Next Button -->
+                <a href="/dashboard/ViewCategory?page=<%= page + 1 %>&searchCategory=<%= Search %>" 
+                   class="<%= page >= totalblog - 1 ? 'disabled' : '' %>">
+                  <button class="<%= page >= totalblog - 1 ? 'disabled' : '' %>">Next</button>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--end::Pagination-->
+
+      </div>
+    </div>
+  </div>
+  <!--end::App Content-->
+</main>
+<!--end::App Main-->
+
+<%- include('../Layouts/Footer') %>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+<script>
+  $("#hideBtn").hide()
+    $("#checkAll").click(function(){
+      $('input:checkbox').not(this).prop('checked', this.checked);
+      $("#hideBtn").toggle()
+    });
+</script>

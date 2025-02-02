@@ -1,0 +1,162 @@
+<%- include('../Layouts/Header') %>
+
+<style>
+  .disabled{
+      pointer-events: none;
+  }
+</style>
+
+      <!--begin::App Main-->
+      <main class="app-main">
+        <!--begin::App Content Header-->
+        <div class="app-content-header">
+          <!--begin::Container-->
+          <div class="container-fluid">
+            <!--begin::Row-->
+            <div class="row">
+              <div class="col-sm-6"><h3 class="mb-0">View Blog</h3></div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="#">Home</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">View Blog</li>
+                </ol>
+              </div>
+            </div>
+            <!--end::Row-->
+          </div>
+          <!--end::Container-->
+        </div>
+        <!--end::App Content Header-->
+        <!--begin::App Content-->
+        <div class="app-content">
+          <!--begin::Container-->
+          <div class="container-fluid">
+            <div class="card mb-4">
+              <div class="card-header row">
+                <h3 class="card-title col-sm-6">Category Data Table</h3>
+
+                <form class="col-sm-4">
+                    <div class="input-group">
+                        <input type="text" name="searchBlog" value="<%= Search %>" placeholder="Search Blog" class="form-control">
+                      <span class="input-group-append">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                      </span>
+                    </div>
+                </form>
+
+                <a class="col-sm-2" href="/dashboard/viewBlog"><button type="submit" class="btn btn-danger">Reset All</button></a>
+                
+                <!-- Sorting Buttons -->
+                  <div class="col-sm-6 d-flex justify-content-start">
+                    <!-- Ascending Button -->
+                    <a href="/dashboard/viewBlog?sortOrder=asc&searchBlog=<%= Search %>" class="btn btn-outline-primary me-2">
+                      Ascending
+                    </a>
+                    <!-- Descending Button -->
+                    <a href="/dashboard/viewBlog?sortOrder=desc&searchBlog=<%= Search %>" class="btn btn-outline-primary">
+                      Descending
+                    </a>
+                  </div>
+                <!-- end  -->
+               
+            </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <form action="/dashBoard/allDeletebtn" method="post">
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>
+                          <input type="checkbox" id="checkAll" class="me-2">
+                          <button type="submit" id="hideDeleteBtn"><i class="bi bi-trash" ></i></button>
+                        </th>
+                      
+                        <th style="width: 10px">#</th>
+                        <th>Blog Title</th>
+                        <th>Blog Category</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Image</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead> 
+                    <tbody>
+                      <tr>
+                        <% BlogData.map((v, i) => { %>
+                            <tr>
+                                <td><input type="checkbox" name="Ids" value="<%= v.id %>" id="checkItem"></td>
+                                <td><%= i+1 %></td>
+                                <td><%= v.blogTitle %></td>
+                                <td><%= v.categoryId.categoryName %></td>
+                                <td><%- v.description %></td>
+                                <td><%= v.status %></td>
+                                <td><img src="<%= v.blogImage %>" alt="<%= v.blogImage %>" width="100px"></td>
+                                <td>
+                                    <a href="/dashboard/deleteBlog/?blogId=<%= v.id %>"><i class="bi bi-trash"></i></a> ||
+                                    <a href="/dashboard/updateBlog/<%= v.id %>"><i class="bi bi-pencil-square"></i></a> ||
+
+                                    <% if(v.status) { %>
+                                      <a href="/dashboard/statusCheck/?statusId=<%= v.id %>&status=false">
+                                        Activate
+                                      </a>
+                                    <% } else { %>
+                                      <a href="/dashboard/statusCheck/?statusId=<%= v.id %>&status=true">
+                                        Deactivate
+                                      </a>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% })%>
+                     </tr>
+                    
+                    </tbody>
+                  </table>
+                </form>
+
+                <!-- paginatin  -->
+                <div class="card-footer">
+                  <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                      <li class="page-item <%= page <= 0 ? 'disabled' : '' %>">
+                        <a class="page-link" 
+                          href="/dashboard/ViewBlog?page=<%= page - 1 %>&searchBlog=<%= Search %>" 
+                          tabindex="-1"
+                        >
+                          Prev
+                        </a>
+                      </li>
+                      <% for (let i = 0; i < totalblog; i++) { %>
+                        <li class="page-item <%= i === page ? 'active' : '' %>">
+                          <a class="page-link" href="/dashboard/ViewBlog?page=<%= i %>&searchBlog=<%= Search %>">
+                            <%= i + 1 %>
+                          </a>
+                        </li>
+                      <% } %>
+                      <li class="page-item <%= page >= totalblog - 1 ? 'disabled' : '' %>">
+                        <a class="page-link" href="/dashboard/ViewBlog?page=<%= page + 1 %>&searchBlog=<%= Search %>" >
+                          Next
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </div>
+          <!--end::Container-->
+        </div>
+        <!--end::App Content-->
+      </main>
+      <!--end::App Main-->
+
+<%- include('../Layouts/Footer') %>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+    $("#hideDeleteBtn").hide()
+    $("#checkAll").click(function(){
+      $('input:checkbox').not(this).prop('checked', this.checked);
+      $("#hideDeleteBtn").toggle()
+    });
+</script>
